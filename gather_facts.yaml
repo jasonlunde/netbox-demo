@@ -1,0 +1,22 @@
+---
+ - name: GATHER FACTS
+   hosts: device_roles_ios
+   connection: network_cli
+   gather_facts: yes #<----Gather Facts Enabled 
+   collections:
+     - dellemc.os10
+
+
+   tasks:
+
+    - name: VIEW ALL ANSIBLE FACT KEYS
+      debug:
+       var: ansible_facts.keys()
+
+    - name: DISPLAY ITEMS
+      debug:
+        var: ansible_net_hostname
+
+    - name: DISPLAY ITEMS
+      debug:
+        var: ansible_net_interfaces

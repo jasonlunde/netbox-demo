@@ -1,0 +1,55 @@
+---
+- name: "Messing up cable map for demo..."
+  connection: local
+  hosts: localhost
+  gather_facts: False
+  vars:
+    net_url: "http://localhost"
+    net_token: "3cae8e837546ef3105bb8ff64309025cc37216a4"
+
+  tasks:
+    - name: Create cable plan within Netbox for demo
+      netbox.netbox.netbox_cable:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          termination_a_type: dcim.interface
+          termination_a:
+            device: Dell-5224-1
+            name: ethernet1/1/6
+          termination_b_type: dcim.interface
+          termination_b:
+            device: Dell-5224-2
+            name: ethernet1/1/6
+        state: absent
+
+    - name: Create cable plan within Netbox for demo
+      netbox.netbox.netbox_cable:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          termination_a_type: dcim.interface
+          termination_a:
+            device: Dell-5224-1
+            name: ethernet1/1/6
+          termination_b_type: dcim.interface
+          termination_b:
+            device: Dell-5224-2
+            name: ethernet1/1/7
+        state: present
+
+    - name: Create cable plan within Netbox for demo
+      netbox.netbox.netbox_cable:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          termination_a_type: dcim.interface
+          termination_a:
+            device: Dell-5224-2
+            name: ethernet1/1/6
+          termination_b_type: dcim.interface
+          termination_b:
+            device: Dell-5224-1
+            name: ethernet1/1/9
+        state: present
+

@@ -1,0 +1,105 @@
+---
+- name: "Populate Netbox Data"
+  connection: local
+  hosts: localhost
+  gather_facts: False
+  vars:
+    net_url: "http://localhost"
+    net_token: "3cae8e837546ef3105bb8ff64309025cc37216a4"
+    device_roles:
+      - ios
+      - dellos10
+    manu:
+      - Dell
+      - Cisco
+    device_types:
+      - name: "Dell_5224_ON"
+        manufacturer: "Dell"
+        part_number: "5224_on"
+        u_height: 1
+        is_full_depth: False
+      - name: "Cisco_7200"
+        manufacturer: "Cisco"
+        part_number: "7200_big"
+        u_height: 2
+        is_full_depth: False
+
+  tasks:
+    - name: Create Dell Device in Netbox
+      netbox.netbox.netbox_device:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          name: "Dell-5224-{{ item }}"
+          device_type: "Dell_5224_ON"
+          device_role: "dellos10"
+          site: "3_node_demo_topology"
+          platform: "dellos10"
+        state: absent
+      with_sequence: 1-2
+
+    - name: Create Cisco Device in Netbox
+      netbox.netbox.netbox_device:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          name: "Cisco_7200_1"
+          device_type: "Cisco_7200"
+          device_role: "ios"
+          site: "3_node_demo_topology"
+          platform: "ios"
+        state: absent
+
+    - name: Create site within Netbox
+      netbox_site:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          name: "3_node_demo_topology"
+          slug: "3_node_demo_topology"
+        state: absent
+
+    - name: Create roles within Netbox
+      netbox.netbox.netbox_device_role:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          name: "{{ item }}"
+          color: "2196f3"
+        state: absent
+      with_items: "{{ device_roles }}"
+
+    - name: Create device type within Netbox with only required information
+      netbox.netbox.netbox_device_type:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          model: "{{ item.name }}"
+          manufacturer: "{{ item.manufacturer }}"
+          part_number: "{{ item.part_number }}"
+          u_height: "{{ item.u_height }}"
+          is_full_depth: "{{ item.is_full_depth }}"
+        state: absent
+      with_items: "{{ device_types }}"
+
+    - name: Create platform within Netbox with only required information
+      netbox.netbox.netbox_platform:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          name: "{{ item }}"
+          napalm_driver: "{{ item }}"
+          napalm_args:
+            secret: "admin"
+        state: absent
+      with_items: "{{ device_roles }}"
+
+    - name: Create manufacturer within Netbox with only required information
+      netbox.netbox.netbox_manufacturer:
+        netbox_url: "{{ net_url }}"
+        netbox_token: "{{ net_token }}"
+        data:
+          name: "{{ item }}"
+        state: absent
+      with_items: "{{ manu }}"
+

@@ -1,0 +1,10 @@
+---
+plugin: netbox
+api_endpoint: http://localhost
+token: "3cae8e837546ef3105bb8ff64309025cc37216a4"
+validate_certs: False
+config_context: True
+group_by:
+  - device_roles
+compose:
+  ansible_network_os: platform.slug
