@@ -1,0 +1,20 @@
+---
+- name: "Messing up cable map for demo..."
+  connection: local
+  hosts: localhost
+  gather_facts: False
+  vars:
+    net_url: "http://localhost"
+    net_token: "3cae8e837546ef3105bb8ff64309025cc37216a4"
+
+  tasks:
+         
+    - name: Get all devices from NetBox
+      uri:
+        url: "{{ net_url }}/api/dcim/devices/24/napalm/?method=get_lldp_neighbors_detail"
+        method: GET
+        return_content: yes
+        headers:
+          accept: "application/json"
+          Authorization: "Token {{ net_token }}"
+      register: nb_all_devices
